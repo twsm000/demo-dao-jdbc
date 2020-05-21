@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.DB;
 import db.DbException;
@@ -38,9 +40,11 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public Seller findById(Integer id) {
+        
         Seller seller = null;
         PreparedStatement statement = null;
         ResultSet result = null;
+        
         try {
             String sql = 
                 "SELECT seller.* " +
@@ -89,7 +93,48 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public List<Seller> findAll() {
-        return null;
+
+        List<Seller> sellers = new ArrayList<>();        
+        PreparedStatement statement = null;
+        ResultSet result = null;
+        
+        try {
+            String sql = 
+                "SELECT seller.*\r\n" + 
+                "      ,department.Name AS DepartmentName\r\n" + 
+                "  FROM seller\r\n" + 
+                " INNER JOIN department\r\n" + 
+                "    ON department.Id = seller.DepartmentId\r\n" +  
+                " ORDER BY seller.Name";                   
+            statement = connection.prepareStatement(sql);
+            result = statement.executeQuery();
+                        
+            if  (result.next()) {
+                Department department = null;        
+                Seller seller = null;                
+                Map<Integer, Department> map = new HashMap<>();
+                
+                do {
+                    department = map.get(result.getInt("DepartmentId"));
+                    if (department == null) {
+                        department = instantiateDepartment(result);
+                        map.put(department.getId(), department);                        
+                    }
+                    
+                    seller = instantiateSeller(result, department);
+                    sellers.add(seller);                    
+                } while (result.next());
+            }
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeStatement(statement);
+            DB.closeResultSet(result);
+        }
+        
+        return sellers;
     }
 
     @Override
