@@ -68,7 +68,23 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
     @Override
     public void deleteById(Integer id) {
-
+        PreparedStatement statement = null;
+        try {
+            String sql =
+                "DELETE FROM department " +
+                " WHERE Id = ? ";
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getMessage().toLowerCase().contains("foreign key")) {
+                throw new DbException("Unable to delete! This department has reference in other tables!");
+            }
+            
+            throw new DbException(e.getMessage());                
+        } finally {
+            DB.closeStatement(statement);
+        }
     }
 
     @Override

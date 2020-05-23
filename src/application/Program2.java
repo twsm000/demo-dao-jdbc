@@ -1,6 +1,7 @@
 package application;
 
 import java.util.List;
+import java.util.Scanner;
 
 import db.DB;
 import model.dao.DaoFactory;
@@ -43,7 +44,18 @@ public class Program2 {
         departmentDao.update(department);
         System.out.println("Update completed.");  
         System.out.println(department);
-                
+
+        System.out.println(" ==== TEST 5: deparment delete ==== ");
+        Scanner scan = new Scanner(System.in);       
+        try {
+            System.out.println("Enter id for delete test: ");
+            int id = scan.nextInt();
+            departmentDao.deleteById(id);
+            System.out.println("Delete completed.");
+        } finally {
+            scan.close();
+        }        
+        
         DB.closeConnection();
     }
 }
