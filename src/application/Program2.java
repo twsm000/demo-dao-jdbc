@@ -34,6 +34,16 @@ public class Program2 {
         departmentDao.insert(department);
         System.out.println(department);        
         
+        System.out.println("--------------------------------------------------------------");
+        
+        System.out.println(" ==== TEST 4: department update ==== ");
+        department = departmentDao.findById(6);
+        System.out.println("BEFORE UPDATE = " + department);        
+        department.setName("Cycling");
+        departmentDao.update(department);
+        System.out.println("Update completed.");  
+        System.out.println(department);
+                
         DB.closeConnection();
     }
 }
