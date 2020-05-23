@@ -27,6 +27,13 @@ public class Program2 {
         departments = departmentDao.findAll();
         departments.forEach(System.out::println);        
         
+        System.out.println("--------------------------------------------------------------");
+        
+        System.out.println(" ==== TEST 3: department insert ==== ");
+        department = new Department(null, "Musical Instruments");   
+        departmentDao.insert(department);
+        System.out.println(department);        
+        
         DB.closeConnection();
     }
 }
